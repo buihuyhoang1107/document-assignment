@@ -11,8 +11,9 @@ import {
   Paper,
   IconButton,
   Button,
+  TextField,
+  Autocomplete
 } from '@mui/material';
-// import { Delete, Edit, Visibility } from '@mui/icons-material';
 import CreateDocumentModal from './CreateDocumentModal';
 import DeleteDocumentModal from './DeleteDocumentModal';
 import UpdateDocumentModal from './UpdateDocumentModal';
@@ -29,16 +30,21 @@ interface Document {
 const GetDocumentsByFolder: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState<{ type: 'create' | 'update' | 'delete' | null; doc?: Document }>({ type: null });
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchDocuments = () => {
     if (!id) return;
     setLoading(true);
     fetch(`http://localhost:4000/api/folders/${id}`)
       .then((res) => res.ok ? res.json() : Promise.reject('Failed to fetch'))
-      .then(setDocuments)
+      .then((data) => {
+        setDocuments(data);
+        setFilteredDocuments(data);
+      })
       .catch(setError)
       .finally(() => setLoading(false));
   };
@@ -48,6 +54,18 @@ const GetDocumentsByFolder: React.FC = () => {
   const formatTimestamp = (timestamp: number) => new Date(timestamp).toLocaleString();
   const handleOpenModal = (type: 'create' | 'update' | 'delete', doc?: Document) => setOpenModal({ type, doc });
   const handleCloseModal = () => setOpenModal({ type: null });
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      setFilteredDocuments(documents);
+    } else {
+      setFilteredDocuments(documents.filter(doc =>
+        doc.title.toLowerCase().includes(query.toLowerCase()) ||
+        doc.content.toLowerCase().includes(query.toLowerCase())
+      ));
+    }
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -60,6 +78,15 @@ const GetDocumentsByFolder: React.FC = () => {
       <Button variant="contained" color="primary" onClick={() => handleOpenModal('create')}>
         Create New Document
       </Button>
+      <Autocomplete
+        freeSolo
+        options={documents.map(doc => doc.title)}
+        inputValue={searchQuery}
+        onInputChange={(_, newInputValue) => handleSearch(newInputValue)}
+        renderInput={(params) => (
+          <TextField {...params} label="Search Documents" variant="outlined" fullWidth margin="normal" />
+        )}
+      />
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -73,12 +100,12 @@ const GetDocumentsByFolder: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {documents.length === 0 ? (
+            {filteredDocuments.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6}>No documents found.</TableCell>
               </TableRow>
             ) : (
-              documents.map((doc) => (
+              filteredDocuments.map((doc) => (
                 <TableRow key={doc.id}>
                   <TableCell>{doc.title}</TableCell>
                   <TableCell>{doc.folderId}</TableCell>
