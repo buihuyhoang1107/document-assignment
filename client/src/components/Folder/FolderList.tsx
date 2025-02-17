@@ -31,6 +31,7 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
     onFolderSelect(id);
     navigate(`/folder/${id}`);
   };
+
   useEffect(() => {
     fetch('http://localhost:4000/api/folders')
       .then((response) => {
@@ -73,8 +74,14 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
   };
 
   //DELETE
+  const handleFolderDeleted = () => {
+    setOpenDeleteModal(false);
+    fetch('http://localhost:4000/api/folders')
+      .then((response) => response.json())
+      .then((data: Folder[]) => setFolders(data));
+  };
+
   const handleDeleteFolderClick = (folderId: string) => {
-    console.log('folderId', folderId);
     setSelectedFolderId(folderId);
     setOpenDeleteModal(true);
   };
@@ -83,12 +90,6 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
     setOpenDeleteModal(false);
   };
 
-  const handleFolderDeleted = () => {
-    setOpenDeleteModal(false);
-    fetch('http://localhost:4000/api/folders')
-      .then((response) => response.json())
-      .then((data: Folder[]) => setFolders(data));
-  };
   return (
     <div>
       <h2>Folder List</h2>

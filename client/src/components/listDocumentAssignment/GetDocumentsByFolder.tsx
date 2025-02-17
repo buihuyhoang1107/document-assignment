@@ -10,7 +10,11 @@ import {
   Typography,
   Paper,
   IconButton,
+  Button,
 } from '@mui/material';
+import CreateDocumentModal from './CreateDocumentModal';
+import DeleteDocumentModal from './DeleteDocumentModal';
+import UpdateDocumentModal from './UpdateDocumentModal';
 interface Document {
   id: string;
   folderId: string;
@@ -22,18 +26,28 @@ interface Document {
 
 const GetDocumentsByFolder: React.FC = () => {
   const { id } = useParams(); // Lấy folderId từ URL
+
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [selectedFolderId, setSelectedDocumentId] = useState<string | null>(
+    null
+  );
+  const [selectedDoc, setSelectedDoc] = useState<{
+    id: string;
+    content: string;
+  } | null>(null);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   const formatTimestamp = (timestamp: number): string => {
-    const date = new Date(timestamp); // Tạo đối tượng Date từ timestamp
+    const date = new Date(timestamp);
     return date.toLocaleString(); // Chuyển thành chuỗi ngày giờ dễ đọc
   };
   useEffect(() => {
     if (!id) return;
-
     setLoading(true);
-
     fetch(`http://localhost:4000/api/folders/${id}`)
       .then((response) => {
         if (!response.ok) {
@@ -57,15 +71,53 @@ const GetDocumentsByFolder: React.FC = () => {
     // Thêm logic để hiển thị chi tiết tài liệu
   };
 
-  const handleEdit = (docId: string) => {
-    console.log(`Edit document with id: ${docId}`);
-    // Thêm logic để chỉnh sửa tài liệu
+  
+
+  //CREATE
+  const handleDocumentCreated = () => {
+    setOpenDeleteModal(false);
+    fetch(`http://localhost:4000/api/folders/${id}`)
+      .then((response) => response.json())
+      .then((data: Document[]) => setDocuments(data));
+  };
+  const handleCreateDocumentClick = () => {
+    setOpenCreateModal(true);
+  };
+
+  const handleCloseCreateDocumentModal = () => {
+    setOpenCreateModal(false);
+  };
+
+  //UPDATE
+  const handleEdit = (doc: Document) => {
+    console.log(`Edit document with id: ${doc}`);
+    setSelectedDoc({ id: doc.id, content: doc.content });
+    setOpenUpdateModal(true);
+  };
+  const handleDocumentUpdate = () => {
+    setOpenDeleteModal(false);
+    fetch(`http://localhost:4000/api/folders/${id}`)
+      .then((response) => response.json())
+      .then((data: Document[]) => setDocuments(data));
+  };
+
+  //DELETE
+  const handleDocumentDeleted = () => {
+    setOpenDeleteModal(false);
+    fetch(`http://localhost:4000/api/folders/${id}`)
+      .then((response) => response.json())
+      .then((data: Document[]) => setDocuments(data));
   };
 
   const handleDelete = (docId: string) => {
-    console.log(`Delete document with id: ${docId}`);
-    // Thêm logic để xóa tài liệu
+    setSelectedDocumentId(docId);
+    setOpenDeleteModal(true);
   };
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -79,6 +131,13 @@ const GetDocumentsByFolder: React.FC = () => {
       <Typography variant="h4" gutterBottom>
         Documents for Folder: {id}
       </Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleCreateDocumentClick}
+      >
+        Create New Document
+      </Button>
 
       <TableContainer component={Paper}>
         <Table>
@@ -105,28 +164,19 @@ const GetDocumentsByFolder: React.FC = () => {
                   <TableCell>{formatTimestamp(doc.createdAt)}</TableCell>
                   <TableCell>{formatTimestamp(doc.updatedAt)}</TableCell>
                   <TableCell>
-                    {/* View Button */}
                     <IconButton
                       onClick={() => handleView(doc.id)}
                       color="primary"
                     >
-                      {/* <VisibilityIcon /> */}
                       view
                     </IconButton>
-                    {/* Edit Button */}
-                    <IconButton
-                      onClick={() => handleEdit(doc.id)}
-                      color="primary"
-                    >
-                      {/* <EditIcon /> */}
+                    <IconButton onClick={() => handleEdit(doc)} color="primary">
                       edit
                     </IconButton>
-                    {/* Delete Button */}
                     <IconButton
                       onClick={() => handleDelete(doc.id)}
                       color="secondary"
                     >
-                      {/* <DeleteIcon /> */}
                       delete
                     </IconButton>
                   </TableCell>
@@ -136,6 +186,33 @@ const GetDocumentsByFolder: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* CreateDocumentModal */}
+      <CreateDocumentModal
+        open={openCreateModal}
+        folderId={id || ''}
+        onClose={handleCloseCreateDocumentModal}
+        onCreate={handleDocumentCreated}
+      />
+      {/* UpdateDocumentModal */}
+
+      {selectedDoc && (
+        <UpdateDocumentModal
+          open={openUpdateModal}
+          onClose={() => setOpenUpdateModal(false)}
+          documentId={selectedDoc.id}
+          currentContent={selectedDoc.content}
+          onUpdateSuccess={handleDocumentUpdate} // Gọi lại API sau khi cập nhật
+        />
+      )}
+
+      {/* DeleteDocumentModal */}
+      <DeleteDocumentModal
+        open={openDeleteModal}
+        documentId={selectedFolderId || ''}
+        onClose={handleCloseDeleteModal}
+        onDocumentDeleted={handleDocumentDeleted}
+      />
     </div>
   );
 };
