@@ -11,6 +11,8 @@ import {
   Paper,
   IconButton,
   Button,
+  TextField,
+  Autocomplete
 } from '@mui/material';
 import CreateDocumentModal from './CreateDocumentModal';
 import DeleteDocumentModal from './DeleteDocumentModal';
@@ -138,7 +140,6 @@ const GetDocumentsByFolder: React.FC = () => {
       >
         Create New Document
       </Button>
-
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -151,12 +152,12 @@ const GetDocumentsByFolder: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {documents.length === 0 ? (
+            {filteredDocuments.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={1}>No documents found.</TableCell>
               </TableRow>
             ) : (
-              documents.map((doc) => (
+              filteredDocuments.map((doc) => (
                 <TableRow key={doc.id}>
                   <TableCell>{doc.title}</TableCell>
                   <TableCell>{doc.folderId}</TableCell>
