@@ -149,12 +149,13 @@ const GetDocumentsByFolder: React.FC = () => {
               <TableCell>Content</TableCell>
               <TableCell>CreatedAt</TableCell>
               <TableCell>UpdatedAt</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredDocuments.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={1}>No documents found.</TableCell>
+                <TableCell colSpan={6}>No documents found.</TableCell>
               </TableRow>
             ) : (
               filteredDocuments.map((doc) => (
