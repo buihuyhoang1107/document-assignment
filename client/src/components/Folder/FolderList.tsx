@@ -1,14 +1,18 @@
+import {
+  Box,
+  Button,
+  Card,
+  CircularProgress,
+  Container,
+  Grid,
+  IconButton,
+  Typography
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreateFolderModal from './CreateFolderModal';
 import DeleteFolderModal from './DeleteFolderModal';
-import {
-  List,
-  ListItem,
-  ListItemText,
-  IconButton,
-  Button,
-} from '@mui/material';
+
 interface Folder {
   id: string;
   name: string;
@@ -19,14 +23,13 @@ interface FolderListProps {
 }
 
 const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
-  const navigate = useNavigate(); // Để chuyển hướng
+  const navigate = useNavigate();
   const [folders, setFolders] = useState<Folder[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
-
   const handleFolderClick = (id: string) => {
     onFolderSelect(id);
     navigate(`/folder/${id}`);
@@ -50,14 +53,6 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
       });
   }, []);
 
-  if (loading) {
-    return <div>Loading folders...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
   //CREATE
   const handleFolderCreated = () => {
     setOpenCreateModal(false);
@@ -65,6 +60,7 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
       .then((response) => response.json())
       .then((data: Folder[]) => setFolders(data));
   };
+
   const handleCreateFolderClick = () => {
     setOpenCreateModal(true);
   };
@@ -91,32 +87,61 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
   };
 
   return (
-    <div>
-      <h2>Folder List</h2>
-      <List>
-        {folders.map((folder) => (
-          <ListItem key={folder.id}>
-            <ListItemText
-              primary={folder.name}
-              onClick={() => handleFolderClick(folder.id)}
-            />
-              <IconButton
-                edge="end"
-                aria-label="delete"
-                onClick={() => handleDeleteFolderClick(folder.id)}
+    <Container>
+      <Box display="flex" justifyContent="space-between" alignItems="center" my={3}>
+        <Typography variant="h4" fontWeight="bold">
+          Folder List
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleCreateFolderClick}
+        >
+          Create Folder
+        </Button>
+      </Box>
+
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={3}>
+          <CircularProgress />
+        </Box>
+      ) : error ? (
+        <Typography color="error" textAlign="center">
+          Error: {error}
+        </Typography>
+      ) : (
+        <Grid container spacing={3}>
+          {folders.map((folder) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={folder.id}>
+              <Card
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  p: 2,
+                  transition: '0.3s',
+                  '&:hover': { boxShadow: 6, transform: 'scale(1.02)' },
+                  cursor: 'pointer',
+                }}
+                onClick={() => handleFolderClick(folder.id)}
               >
-                delete
-              </IconButton>
-          </ListItem>
-        ))}
-      </List>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleCreateFolderClick}
-      >
-        Create New Folder
-      </Button>
+                <Box display="flex" alignItems="center">
+                  <Typography variant="h6">{folder.name}</Typography>
+                </Box>
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteFolderClick(folder.id);
+                  }}
+                  color="error"
+                >
+                  Delete
+                </IconButton>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      )}
 
       {/* CreateFolderModal */}
       <CreateFolderModal
@@ -132,7 +157,7 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
         folderId={selectedFolderId || ''}
         onFolderDeleted={handleFolderDeleted}
       />
-    </div>
+    </Container>
   );
 };
 

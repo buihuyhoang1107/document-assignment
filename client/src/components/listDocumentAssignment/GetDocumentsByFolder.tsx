@@ -206,7 +206,6 @@ const GetDocumentsByFolder: React.FC = () => {
                         style={{
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
-                          maxWidth: '150px',
                           whiteSpace: 'nowrap',
                         }}
                       >

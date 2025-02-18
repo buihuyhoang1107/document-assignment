@@ -83,11 +83,6 @@ const CreateDocumentModal: React.FC<CreateDocumentModalProps> = ({
           onChange={(e) => setTitle(e.target.value)}
           sx={{ mb: 2 }}
         />
-        {error && (
-          <Typography color="error" variant="body2" gutterBottom>
-            {error}
-          </Typography>
-        )}
         <TextField
           label="Content"
           fullWidth
@@ -98,6 +93,11 @@ const CreateDocumentModal: React.FC<CreateDocumentModalProps> = ({
           onChange={(e) => setContent(e.target.value)}
           sx={{ mb: 2 }}
         />
+        {error && (
+          <Typography color="error" variant="body2" gutterBottom>
+            {error}
+          </Typography>
+        )}
         <Button
           variant="contained"
           color="primary"

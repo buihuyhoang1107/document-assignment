@@ -22,7 +22,7 @@ const CreateFolderModal: React.FC<{
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFolderName(e.target.value);
   };
-
+ 
   const handleSubmit = async () => {
     if (!folderName) {
       setError('Folder name is required');
