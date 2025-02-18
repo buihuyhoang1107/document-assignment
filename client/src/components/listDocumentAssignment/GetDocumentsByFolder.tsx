@@ -14,6 +14,8 @@ import {
   TextField,
   Autocomplete,
   Grid2,
+  Container,
+  Box,
 } from '@mui/material';
 import CreateDocumentModal from './CreateDocumentModal';
 import DeleteDocumentModal from './DeleteDocumentModal';
@@ -149,17 +151,25 @@ const GetDocumentsByFolder: React.FC = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <Typography variant="h4" gutterBottom>
-        Documents for Folder: {id}
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => handleOpenModal('create')}
+    <Container maxWidth='xl'>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        my={3}
       >
-        Create New Document
-      </Button>
+        <Typography variant="h4" fontWeight="bold">
+          Documents for Folder: {id}
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleOpenModal('create')}
+        >
+          Create New Document
+        </Button>
+      </Box>
+
       <Autocomplete
         freeSolo
         options={documents.map((doc) => doc.title)}
@@ -176,108 +186,170 @@ const GetDocumentsByFolder: React.FC = () => {
         )}
       />
       <Grid2 container spacing={3}>
-        <Grid2 item xs={12} sm={8}>
-          <TableContainer
-            component={Paper}
-            style={{ maxHeight: '100%', overflowY: 'auto' }}
+        {/* Document */}
+        {/* <Grid2 item xs={12} sm={6} width='-webkit-fill-available'>
+        size={2}  */}
+        <Grid2 item xs={12} sm={6} size={8}>
+          <Box
+            sx={{
+              bgcolor: 'background.paper',
+              borderRadius: 2,
+              boxShadow: 3,
+              p: 3,
+            }}
           >
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>FolderId</TableCell>
-                  <TableCell>Content</TableCell>
-                  <TableCell>CreatedAt</TableCell>
-                  <TableCell>UpdatedAt</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredDocuments.length === 0 ? (
+            <Typography variant="h6" gutterBottom>
+              Documents
+            </Typography>
+            <TableContainer
+              component={Paper}
+              sx={{
+                maxHeight: 400,
+                overflowY: 'auto',
+                borderRadius: 2,
+              }}
+            >
+              <Table stickyHeader aria-label="sticky table">
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={6}>No documents found.</TableCell>
+                    <TableCell>Title</TableCell>
+                    <TableCell>FolderId</TableCell>
+                    <TableCell>Content</TableCell>
+                    <TableCell>CreatedAt</TableCell>
+                    <TableCell>UpdatedAt</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
-                ) : (
-                  filteredDocuments.map((doc) => (
-                    <TableRow key={doc.id}>
-                      <TableCell>{doc.title}</TableCell>
-                      <TableCell>{doc.folderId}</TableCell>
-                      <TableCell
-                        style={{
+                </TableHead>
+                <TableBody>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        Loading
+                      </TableCell>
+                    </TableRow>
+                  ) : filteredDocuments.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        No documents found.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredDocuments.map((doc) => (
+                      <TableRow key={doc.id}>
+                        <TableCell>{doc.title}</TableCell>
+                        <TableCell>{doc.folderId}</TableCell>
+                        <TableCell
+                          sx={{
+                            maxWidth: 200,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {doc.content}
+                        </TableCell>
+                        <TableCell>{formatTimestamp(doc.createdAt)}</TableCell>
+                        <TableCell>{formatTimestamp(doc.updatedAt)}</TableCell>
+                        <TableCell>
+                          <IconButton
+                            onClick={() => handleViewDocument(doc)}
+                            color="primary"
+                            size="small"
+                          >
+                            Detail
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleOpenModal('update', doc)}
+                            color="primary"
+                            size="small"
+                          >
+                            Edit
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleOpenModal('delete', doc)}
+                            color="secondary"
+                            size="small"
+                          >
+                            Delete
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </Grid2>
+
+        {/* History Viewed Documents */}
+        <Grid2 item xs={12} sm={6} size={4}>
+          <Box
+            sx={{
+              bgcolor: 'background.paper',
+              borderRadius: 2,
+              boxShadow: 3,
+              p: 3,
+            }}
+          >
+            <Typography variant="h6" gutterBottom>
+              History Viewed Documents
+            </Typography>
+            <TableContainer
+              component={Paper}
+              sx={{
+                maxHeight: 400,
+                overflowY: 'auto',
+                borderRadius: 2,
+              }}
+            >
+               <Table stickyHeader aria-label="sticky table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Title</TableCell>
+                    <TableCell>Timestamp</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {loading ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        loading
+                      </TableCell>
+                    </TableRow>
+                  ) : viewHistory.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        No recent documents viewed.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    viewHistory.map((history) => (
+                      <TableRow
+                        sx={{
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
                         }}
+                        key={history.id}
+                        onClick={() => handleViewDocument(history)}
                       >
-                        {doc.content}
-                      </TableCell>
-                      <TableCell>{formatTimestamp(doc.createdAt)}</TableCell>
-                      <TableCell>{formatTimestamp(doc.updatedAt)}</TableCell>
-                      <TableCell>
-                        <IconButton
-                          onClick={() => handleViewDocument(doc)}
-                          color="primary"
-                        >
-                          view
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleOpenModal('update', doc)}
-                          color="primary"
-                        >
-                          Edit
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleOpenModal('delete', doc)}
-                          color="secondary"
-                        >
-                          Delete
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid2>
-
-        {/* Recently Viewed Documents */}
-        <Grid2 item xs={12} sm={4}>
-          <Typography variant="h6" gutterBottom>
-            Recently Viewed Documents
-          </Typography>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Timestamp</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {viewHistory.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={2}>
-                      No recent documents viewed.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  viewHistory.map((history) => (
-                    <TableRow
-                      key={history.id}
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleViewDocument(history)}
-                    >
-                      <TableCell>{history.title}</TableCell>
-                      <TableCell>
-                        {formatTimestamp(history.timestamp)}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                        <TableCell  sx={{
+                            maxWidth: 150,
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}>{history.title}</TableCell>
+                        <TableCell>
+                          {formatTimestamp(history.timestamp)}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
         </Grid2>
       </Grid2>
 
@@ -313,7 +385,7 @@ const GetDocumentsByFolder: React.FC = () => {
         document={selectedDocument}
         onClose={() => setSelectedDocument(null)}
       />
-    </div>
+    </Container>
   );
 };
 

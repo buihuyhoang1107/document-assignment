@@ -67,7 +67,7 @@ const CreateDocumentModal: React.FC<CreateDocumentModalProps> = ({
           p: 3,
           bgcolor: 'background.paper',
           borderRadius: 2,
-          width: 400,
+          width: 500,
           margin: 'auto',
           mt: '10%',
         }}
@@ -87,7 +87,7 @@ const CreateDocumentModal: React.FC<CreateDocumentModalProps> = ({
           label="Content"
           fullWidth
           multiline
-          rows={4}
+          rows={10}
           variant="outlined"
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -98,21 +98,28 @@ const CreateDocumentModal: React.FC<CreateDocumentModalProps> = ({
             {error}
           </Typography>
         )}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit}
-          sx={{ mr: 1 }}
-        >
-          {loading ? (
-            <CircularProgress size={24} color="primary" />
-          ) : (
-            'Create Document'
-          )}
-        </Button>
-        <Button variant="outlined" color="secondary" onClick={onClose}>
-          Cancel
-        </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={onClose}
+            sx={{ mr: 1 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              'Create Document'
+            )}
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );

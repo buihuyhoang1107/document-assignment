@@ -68,6 +68,12 @@ const CreateFolderModal: React.FC<{
           margin="normal"
           variant="outlined"
           autoFocus
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault(); 
+              handleSubmit();
+            }
+          }}
         />
 
         {error && (

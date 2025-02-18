@@ -4,7 +4,7 @@ import {
   Card,
   CircularProgress,
   Container,
-  Grid,
+  Grid2,
   IconButton,
   Typography
 } from '@mui/material';
@@ -110,9 +110,9 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
           Error: {error}
         </Typography>
       ) : (
-        <Grid container spacing={3}>
+        <Grid2 container spacing={3}>
           {folders.map((folder) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={folder.id}>
+            <Grid2 item xs={12} sm={6} md={4} lg={3} key={folder.id}>
               <Card
                 sx={{
                   display: 'flex',
@@ -138,9 +138,9 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
                   Delete
                 </IconButton>
               </Card>
-            </Grid>
+            </Grid2>
           ))}
-        </Grid>
+        </Grid2>
       )}
 
       {/* CreateFolderModal */}
