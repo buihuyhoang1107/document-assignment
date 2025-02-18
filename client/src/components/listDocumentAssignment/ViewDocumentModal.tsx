@@ -2,14 +2,17 @@ import React from 'react';
 import { Modal, Box, Typography, Button } from '@mui/material';
 import { DocumentWithTimestamp } from './type';
 
-
 interface ViewDocumentModalProps {
   open: boolean;
   document: DocumentWithTimestamp | null;
   onClose: () => void;
 }
 
-const ViewDocumentModal: React.FC<ViewDocumentModalProps> = ({ open, document, onClose }) => {
+const ViewDocumentModal: React.FC<ViewDocumentModalProps> = ({
+  open,
+  document,
+  onClose,
+}) => {
   if (!document) return null;
 
   return (
@@ -20,20 +23,27 @@ const ViewDocumentModal: React.FC<ViewDocumentModalProps> = ({ open, document, o
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 500,
-          bgcolor: 'background.paper',
+          width: 700,
+          bgcolor: 'background.default',
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
         }}
       >
         <Typography variant="h5" id="document-title" gutterBottom>
-          {document.title}
+          Title: {document.title}
         </Typography>
-        <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-          {document.content}
+        <Typography
+          variant="body1"
+          sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+        >
+          Content: {document.content}
         </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 2 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ display: 'block', mt: 2 }}
+        >
           Created: {new Date(document.createdAt).toLocaleString()}
         </Typography>
         <Typography variant="caption" color="text.secondary">

@@ -16,6 +16,7 @@ import {
   Grid2,
   Container,
   Box,
+  Card,
 } from '@mui/material';
 import CreateDocumentModal from './CreateDocumentModal';
 import DeleteDocumentModal from './DeleteDocumentModal';
@@ -70,11 +71,10 @@ const GetDocumentsByFolder: React.FC = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data && Array.isArray(data)) {
-          // Lọc bỏ tài liệu trùng
+          // Lọc bỏ trùng lặp
           const uniqueHistory = [
             ...new Map(data.map((item) => [item.id, item])).values(),
           ];
-
           setViewHistory(uniqueHistory);
         } else {
           console.error('Dữ liệu lịch sử không hợp lệ');
@@ -151,7 +151,7 @@ const GetDocumentsByFolder: React.FC = () => {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <Container maxWidth='xl'>
+    <Container maxWidth="xl">
       <Box
         display="flex"
         justifyContent="space-between"
@@ -186,9 +186,6 @@ const GetDocumentsByFolder: React.FC = () => {
         )}
       />
       <Grid2 container spacing={3}>
-        {/* Document */}
-        {/* <Grid2 item xs={12} sm={6} width='-webkit-fill-available'>
-        size={2}  */}
         <Grid2 item xs={12} sm={6} size={8}>
           <Box
             sx={{
@@ -204,7 +201,7 @@ const GetDocumentsByFolder: React.FC = () => {
             <TableContainer
               component={Paper}
               sx={{
-                maxHeight: 400,
+                maxHeight: 500,
                 overflowY: 'auto',
                 borderRadius: 2,
               }}
@@ -212,6 +209,7 @@ const GetDocumentsByFolder: React.FC = () => {
               <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
+                    <TableCell>ID</TableCell>
                     <TableCell>Title</TableCell>
                     <TableCell>FolderId</TableCell>
                     <TableCell>Content</TableCell>
@@ -234,8 +232,9 @@ const GetDocumentsByFolder: React.FC = () => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredDocuments.map((doc) => (
+                    filteredDocuments.map((doc, index) => (
                       <TableRow key={doc.id}>
+                        <TableCell>{index + 1}</TableCell>
                         <TableCell>{doc.title}</TableCell>
                         <TableCell>{doc.folderId}</TableCell>
                         <TableCell
@@ -298,12 +297,12 @@ const GetDocumentsByFolder: React.FC = () => {
             <TableContainer
               component={Paper}
               sx={{
-                maxHeight: 400,
+                maxHeight: 500,
                 overflowY: 'auto',
                 borderRadius: 2,
               }}
             >
-               <Table stickyHeader aria-label="sticky table">
+              <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
                     <TableCell>Title</TableCell>
@@ -332,14 +331,17 @@ const GetDocumentsByFolder: React.FC = () => {
                           whiteSpace: 'nowrap',
                         }}
                         key={history.id}
-                        onClick={() => handleViewDocument(history)}
                       >
-                        <TableCell  sx={{
+                        <TableCell
+                          sx={{
                             maxWidth: 150,
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
-                          }}>{history.title}</TableCell>
+                          }}
+                        >
+                          {history.title}
+                        </TableCell>
                         <TableCell>
                           {formatTimestamp(history.timestamp)}
                         </TableCell>
@@ -362,6 +364,7 @@ const GetDocumentsByFolder: React.FC = () => {
           onCreate={fetchDocuments}
         />
       )}
+
       {openModal.type === 'update' && openModal.doc && (
         <UpdateDocumentModal
           open
@@ -371,6 +374,7 @@ const GetDocumentsByFolder: React.FC = () => {
           onUpdateSuccess={fetchDocuments}
         />
       )}
+
       {openModal.type === 'delete' && openModal.doc && (
         <DeleteDocumentModal
           open
