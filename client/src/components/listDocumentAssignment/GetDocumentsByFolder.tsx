@@ -64,28 +64,48 @@ const GetDocumentsByFolder: React.FC = () => {
   };
 
   const fetchViewHistory = () => {
-    const history = JSON.parse(localStorage.getItem('viewHistory') || '[]');
-    setViewHistory(history);
+    fetch('http://localhost:4000/api/history')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && Array.isArray(data)) {
+          // Lọc bỏ tài liệu trùng
+          const uniqueHistory = [
+            ...new Map(data.map((item) => [item.id, item])).values(),
+          ];
+
+          setViewHistory(uniqueHistory);
+        } else {
+          console.error('Dữ liệu lịch sử không hợp lệ');
+        }
+      })
+      .catch((err) => {
+        console.error('Không thể lấy lịch sử từ API:', err);
+      });
   };
 
+  //SaveViewHistory
   const saveViewHistory = (doc: Document) => {
-    const newHistory: DocumentWithTimestamp = {
-      ...doc,
-      timestamp: Date.now(),
+    const newHistory = {
+      id: doc.id,
+      title: doc.title,
     };
 
-    const currentHistory: DocumentWithTimestamp[] = JSON.parse(
-      localStorage.getItem('viewHistory') || '[]'
-    );
-
-    // Giữ tối đa 5 tài liệu gần đây
-    const updatedHistory = [
-      newHistory,
-      ...currentHistory.filter((history) => history.id !== doc.id),
-    ].slice(0, 5);
-
-    localStorage.setItem('viewHistory', JSON.stringify(updatedHistory));
-    setViewHistory(updatedHistory);
+    fetch('http://localhost:4000/api/history', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newHistory),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === 'added') {
+          fetchViewHistory();
+        }
+      })
+      .catch((err) => {
+        console.error('Không thể lưu lịch sử:', err);
+      });
   };
 
   useEffect(() => {
@@ -159,7 +179,7 @@ const GetDocumentsByFolder: React.FC = () => {
         <Grid2 item xs={12} sm={8}>
           <TableContainer
             component={Paper}
-            style={{ maxHeight: '60%', overflowY: 'auto' }}
+            style={{ maxHeight: '100%', overflowY: 'auto' }}
           >
             <Table>
               <TableHead>
