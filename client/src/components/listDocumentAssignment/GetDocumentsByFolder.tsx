@@ -18,6 +18,7 @@ import {
 import CreateDocumentModal from './CreateDocumentModal';
 import DeleteDocumentModal from './DeleteDocumentModal';
 import UpdateDocumentModal from './UpdateDocumentModal';
+import ViewDocumentModal from './ViewDocumentModal';
 
 interface Document {
   id: string;
@@ -35,9 +36,11 @@ const GetDocumentsByFolder: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
-  const [viewHistory, setViewHistory] = useState<Document[]>([]);
+  const [viewHistory, setViewHistory] = useState<DocumentWithTimestamp[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDocument, setSelectedDocument] =
+    useState<DocumentWithTimestamp | null>(null);
   const [openModal, setOpenModal] = useState<{
     type: 'create' | 'update' | 'delete' | null;
     doc?: Document;
@@ -70,20 +73,19 @@ const GetDocumentsByFolder: React.FC = () => {
       ...doc,
       timestamp: Date.now(),
     };
-  
+
     const currentHistory: DocumentWithTimestamp[] = JSON.parse(
       localStorage.getItem('viewHistory') || '[]'
     );
-  
+
     // Giữ tối đa 5 tài liệu gần đây
     const updatedHistory = [
       newHistory,
       ...currentHistory.filter((history) => history.id !== doc.id),
     ].slice(0, 5);
-  
+
     localStorage.setItem('viewHistory', JSON.stringify(updatedHistory));
     setViewHistory(updatedHistory);
-    console.log('viewHistory',viewHistory)
   };
 
   useEffect(() => {
@@ -120,6 +122,7 @@ const GetDocumentsByFolder: React.FC = () => {
 
   const handleViewDocument = (doc: Document) => {
     saveViewHistory(doc);
+    setSelectedDocument({ ...doc, timestamp: Date.now() });
   };
 
   if (loading) return <p>Loading...</p>;
@@ -244,12 +247,12 @@ const GetDocumentsByFolder: React.FC = () => {
                     <TableRow
                       key={history.id}
                       style={{ cursor: 'pointer' }}
+                      onClick={() => handleViewDocument(history)}
                     >
                       <TableCell>{history.title}</TableCell>
                       <TableCell>
-                        {formatTimestamp(history.createdAt)}
+                        {formatTimestamp(history.timestamp)}
                       </TableCell>
-                      <p onClick={() => handleViewDocument(history)}>view</p>
                     </TableRow>
                   ))
                 )}
@@ -285,6 +288,12 @@ const GetDocumentsByFolder: React.FC = () => {
           onDocumentDeleted={fetchDocuments}
         />
       )}
+
+      <ViewDocumentModal
+        open={Boolean(selectedDocument)}
+        document={selectedDocument}
+        onClose={() => setSelectedDocument(null)}
+      />
     </div>
   );
 };
