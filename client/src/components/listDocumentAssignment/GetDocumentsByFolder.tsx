@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -38,6 +38,7 @@ interface DocumentWithTimestamp extends Omit<Document, 'timestamp'> {
 
 const GetDocumentsByFolder: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const locationFolder = useLocation();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
   const [viewHistory, setViewHistory] = useState<DocumentWithTimestamp[]>([]);
@@ -176,7 +177,7 @@ const GetDocumentsByFolder: React.FC = () => {
             maxWidth: { xs: '80%', sm: 'auto' },
           }}
         >
-          Documents for Folder: {id}
+          Documents for Folder: {locationFolder.state?.folder?.name}
         </Typography>
         <Button
           variant="contained"
@@ -287,7 +288,7 @@ const GetDocumentsByFolder: React.FC = () => {
                           </IconButton>
                           <IconButton
                             onClick={() => handleOpenModal('delete', doc)}
-                            color="secondary"
+                            color="error"
                             size="small"
                           >
                             Delete

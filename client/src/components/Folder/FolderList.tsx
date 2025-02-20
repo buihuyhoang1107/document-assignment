@@ -107,7 +107,7 @@ const FolderList: React.FC = () => {
                   '&:hover': { boxShadow: 6, transform: 'scale(1.02)' },
                   cursor: 'pointer',
                 }}
-                onClick={() => navigate(`/folder/${folder.id}`)}
+                onClick={() => navigate(`/folder/${folder.id}`, {state: {folder}})}
               >
                 <Box display="flex" alignItems="center">
                   <Typography variant="h6">{folder.name}</Typography>
