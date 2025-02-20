@@ -1,5 +1,8 @@
 {
   "name": "@nx-document-assignment/client",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "dev": "remix dev",
+  "build": "remix build && vite build",
+  "start": "remix-serve build"
 }
