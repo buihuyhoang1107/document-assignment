@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Box, Typography, Button } from '@mui/material';
 import { DocumentWithTimestamp } from './type';
-
+import ReactMarkdown from "react-markdown";
 interface ViewDocumentModalProps {
   open: boolean;
   document: DocumentWithTimestamp | null;
@@ -23,11 +23,13 @@ const ViewDocumentModal: React.FC<ViewDocumentModalProps> = ({
           top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
-          width: 700,
+          width: 500,
+          maxHeight: 700,
           bgcolor: 'background.default',
           boxShadow: 24,
           p: 4,
           borderRadius: 2,
+          overflowY: 'auto',
         }}
       >
         <Typography variant="h5" id="document-title" gutterBottom>
@@ -37,7 +39,7 @@ const ViewDocumentModal: React.FC<ViewDocumentModalProps> = ({
           variant="body1"
           sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
         >
-          Content: {document.content}
+           <ReactMarkdown>{document.content}</ReactMarkdown>
         </Typography>
         <Typography
           variant="caption"
