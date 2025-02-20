@@ -1,18 +1,26 @@
+import {
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography
+} from '@mui/material';
 import React, { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress, Typography } from '@mui/material';
 
 interface DeleteDocumentModalProps {
   open: boolean;
   onClose: () => void;
   documentId: string;
-  onDocumentDeleted: () => void;
+  onDeletedSuccess: (sbMSG: string) => void;
 }
 
 const DeleteDocumentModal: React.FC<DeleteDocumentModalProps> = ({
   open,
   onClose,
   documentId,
-  onDocumentDeleted,
+  onDeletedSuccess,
 }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
@@ -22,9 +30,12 @@ const DeleteDocumentModal: React.FC<DeleteDocumentModalProps> = ({
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:4000/api/documents/${documentId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://localhost:4000/api/documents/${documentId}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       const data = await response.json();
 
@@ -32,10 +43,11 @@ const DeleteDocumentModal: React.FC<DeleteDocumentModalProps> = ({
         throw new Error(data.error || 'Failed to delete document');
       }
 
-      onDocumentDeleted(); // Notify parent component to refresh document list
-      onClose(); 
+      onDeletedSuccess('Document delete successfully!');
+      onClose();
     } catch (error: any) {
       setError(error.message);
+      onDeletedSuccess(error.message);
     } finally {
       setLoading(false);
     }
@@ -43,7 +55,7 @@ const DeleteDocumentModal: React.FC<DeleteDocumentModalProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Delete Folder</DialogTitle>
+      <DialogTitle>Delete Document</DialogTitle>
       <DialogContent>
         <Typography variant="body1">
           Are you sure you want to delete this document?

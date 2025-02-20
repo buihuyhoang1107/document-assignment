@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress, Typography } from '@mui/material';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  CircularProgress,
+  Typography,
+} from '@mui/material';
 
 interface DeleteFolderModalProps {
   open: boolean;
   onClose: () => void;
   folderId: string;
-  onFolderDeleted: () => void;
+  onFolderDeleted: (sbMSG: string) => void;
 }
 
 const DeleteFolderModal: React.FC<DeleteFolderModalProps> = ({
@@ -22,9 +30,12 @@ const DeleteFolderModal: React.FC<DeleteFolderModalProps> = ({
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:4000/api/folders/${folderId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://localhost:4000/api/folders/${folderId}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       const data = await response.json();
 
@@ -32,10 +43,11 @@ const DeleteFolderModal: React.FC<DeleteFolderModalProps> = ({
         throw new Error(data.error || 'Failed to delete folder');
       }
 
-      onFolderDeleted(); // Notify parent component to refresh folder list
-      onClose(); 
+      onFolderDeleted('Folder delete successfully!');
+      onClose();
     } catch (error: any) {
       setError(error.message);
+      onFolderDeleted(error.message);
     } finally {
       setLoading(false);
     }

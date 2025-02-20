@@ -16,7 +16,8 @@ import {
   Grid2,
   Container,
   Box,
-  Card,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import CreateDocumentModal from './CreateDocumentModal';
 import DeleteDocumentModal from './DeleteDocumentModal';
@@ -49,8 +50,10 @@ const GetDocumentsByFolder: React.FC = () => {
     doc?: Document;
   }>({ type: null });
   const [searchQuery, setSearchQuery] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
-  // Fetch documents and view history
+  // Fetch documents
   const fetchDocuments = () => {
     if (!id) return;
     setLoading(true);
@@ -65,7 +68,7 @@ const GetDocumentsByFolder: React.FC = () => {
       .catch(setError)
       .finally(() => setLoading(false));
   };
-
+  // View history
   const fetchViewHistory = () => {
     fetch('http://localhost:4000/api/history')
       .then((res) => res.json())
@@ -108,6 +111,12 @@ const GetDocumentsByFolder: React.FC = () => {
       .catch((err) => {
         console.error('Không thể lưu lịch sử:', err);
       });
+  };
+
+  const handleDocumentAction = (sbMSG: string) => {
+    fetchDocuments();
+    setSnackbarMessage(sbMSG);
+    setSnackbarOpen(true);
   };
 
   useEffect(() => {
@@ -157,13 +166,25 @@ const GetDocumentsByFolder: React.FC = () => {
         justifyContent="space-between"
         alignItems="center"
         my={3}
+        flexWrap="wrap"
       >
-        <Typography variant="h4" fontWeight="bold">
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          sx={{
+            flexGrow: 1,
+            maxWidth: { xs: '80%', sm: 'auto' },
+          }}
+        >
           Documents for Folder: {id}
         </Typography>
         <Button
           variant="contained"
           color="primary"
+          sx={{
+            mt: { xs: 2, sm: 0 },
+            width: { xs: '100%', sm: 'auto' },
+          }}
           onClick={() => handleOpenModal('create')}
         >
           Create New Document
@@ -361,7 +382,7 @@ const GetDocumentsByFolder: React.FC = () => {
           open
           onClose={handleCloseModal}
           folderId={id || ''}
-          onCreate={fetchDocuments}
+          onAddSuccess={handleDocumentAction}
         />
       )}
 
@@ -371,7 +392,7 @@ const GetDocumentsByFolder: React.FC = () => {
           onClose={handleCloseModal}
           documentId={openModal.doc.id}
           currentContent={openModal.doc.content}
-          onUpdateSuccess={fetchDocuments}
+          onUpdateSuccess={handleDocumentAction}
         />
       )}
 
@@ -380,7 +401,7 @@ const GetDocumentsByFolder: React.FC = () => {
           open
           documentId={openModal.doc.id}
           onClose={handleCloseModal}
-          onDocumentDeleted={fetchDocuments}
+          onDeletedSuccess={handleDocumentAction}
         />
       )}
 
@@ -389,6 +410,22 @@ const GetDocumentsByFolder: React.FC = () => {
         document={selectedDocument}
         onClose={() => setSelectedDocument(null)}
       />
+
+      {/* Notification */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="success"
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

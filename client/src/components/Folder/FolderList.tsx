@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -6,9 +7,10 @@ import {
   Container,
   Grid2,
   IconButton,
-  Typography
+  Snackbar,
+  Typography,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CreateFolderModal from './CreateFolderModal';
 import DeleteFolderModal from './DeleteFolderModal';
@@ -18,77 +20,59 @@ interface Folder {
   name: string;
 }
 
-interface FolderListProps {
-  onFolderSelect: (folderId: string) => void;
-}
-
-const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
+const FolderList: React.FC = () => {
   const navigate = useNavigate();
   const [folders, setFolders] = useState<Folder[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [openCreateModal, setOpenCreateModal] = useState<boolean>(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
-  const handleFolderClick = (id: string) => {
-    onFolderSelect(id);
-    navigate(`/folder/${id}`);
-  };
+  const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
 
-  useEffect(() => {
+  const fetchFolders = useCallback(() => {
+    setLoading(true);
     fetch('http://localhost:4000/api/folders')
       .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch folders');
-        }
+        if (!response.ok) throw new Error('Failed to fetch folders');
         return response.json();
       })
-      .then((data: Folder[]) => {
-        setFolders(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false);
-      });
+      .then((data: Folder[]) => setFolders(data))
+      .catch((error) => setError(error.message))
+      .finally(() => setLoading(false));
   }, []);
 
-  //CREATE
-  const handleFolderCreated = () => {
-    setOpenCreateModal(false);
-    fetch('http://localhost:4000/api/folders')
-      .then((response) => response.json())
-      .then((data: Folder[]) => setFolders(data));
+  const handleDocumentAction = (sbMSG: string) => {
+    fetchFolders();
+    setSnackbarMessage(sbMSG);
+    setSnackbarOpen(true);
+    handleCloseModal();
   };
 
-  const handleCreateFolderClick = () => {
-    setOpenCreateModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenCreateModal(false);
-  };
-
-  //DELETE
-  const handleFolderDeleted = () => {
-    setOpenDeleteModal(false);
-    fetch('http://localhost:4000/api/folders')
-      .then((response) => response.json())
-      .then((data: Folder[]) => setFolders(data));
-  };
+  const handleCreateFolderClick = () => setOpenCreateModal(true);
 
   const handleDeleteFolderClick = (folderId: string) => {
     setSelectedFolderId(folderId);
     setOpenDeleteModal(true);
   };
 
-  const handleCloseDeleteModal = () => {
+  const handleCloseModal = () => {
+    setOpenCreateModal(false);
     setOpenDeleteModal(false);
   };
 
+  useEffect(() => {
+    fetchFolders();
+  }, [fetchFolders]);
   return (
     <Container>
-      <Box display="flex" justifyContent="space-between" alignItems="center" my={3}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        my={3}
+      >
         <Typography variant="h4" fontWeight="bold">
           Folder List
         </Typography>
@@ -123,7 +107,7 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
                   '&:hover': { boxShadow: 6, transform: 'scale(1.02)' },
                   cursor: 'pointer',
                 }}
-                onClick={() => handleFolderClick(folder.id)}
+                onClick={() => navigate(`/folder/${folder.id}`)}
               >
                 <Box display="flex" alignItems="center">
                   <Typography variant="h6">{folder.name}</Typography>
@@ -143,20 +127,34 @@ const FolderList: React.FC<FolderListProps> = ({ onFolderSelect }) => {
         </Grid2>
       )}
 
-      {/* CreateFolderModal */}
       <CreateFolderModal
         open={openCreateModal}
         onClose={handleCloseModal}
-        onFolderCreated={handleFolderCreated}
+        onFolderCreated={handleDocumentAction}
       />
 
-      {/* DeleteFolderModal */}
       <DeleteFolderModal
         open={openDeleteModal}
-        onClose={handleCloseDeleteModal}
+        onClose={handleCloseModal}
         folderId={selectedFolderId || ''}
-        onFolderDeleted={handleFolderDeleted}
+        onFolderDeleted={handleDocumentAction}
       />
+      
+      {/* Notification */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="success"
+          variant="filled"
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

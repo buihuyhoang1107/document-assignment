@@ -6,7 +6,7 @@ interface UpdateDocumentModalProps {
   onClose: () => void;
   documentId: string;
   currentContent: string;
-  onUpdateSuccess: () => void;
+  onUpdateSuccess: (sbMSG: string) => void;
 }
 
 const UpdateDocumentModal: React.FC<UpdateDocumentModalProps> = ({
@@ -42,10 +42,11 @@ const UpdateDocumentModal: React.FC<UpdateDocumentModalProps> = ({
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Update failed');
 
-      onUpdateSuccess(); // Refresh danh sách tài liệu
-      onClose(); // Đóng modal
+      onUpdateSuccess('Document update successfully!');
+      onClose(); 
     } catch (err: any) {
       setError(err.message);
+      onUpdateSuccess(err.message);
     } finally {
       setLoading(false);
     }

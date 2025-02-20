@@ -11,14 +11,14 @@ import {
 interface CreateDocumentModalProps {
   open: boolean;
   onClose: () => void;
-  onCreate: () => void;
+  onAddSuccess: (sbMSG: string) => void;
   folderId: string;
 }
 
 const CreateDocumentModal: React.FC<CreateDocumentModalProps> = ({
   open,
   onClose,
-  onCreate,
+  onAddSuccess,
   folderId,
 }) => {
   const [title, setTitle] = useState('');
@@ -49,10 +49,11 @@ const CreateDocumentModal: React.FC<CreateDocumentModalProps> = ({
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create document');
       }
-      onCreate();
+      onAddSuccess('Document add successfully!');
       onClose();
     } catch (error: any) {
       setError(error.message);
+      onAddSuccess(error.message);
     } finally {
       setLoading(false);
     }

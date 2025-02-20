@@ -13,7 +13,7 @@ import {
 const CreateFolderModal: React.FC<{
   open: boolean;
   onClose: () => void;
-  onFolderCreated: () => void;
+  onFolderCreated: (sbMSG: string) => void;
 }> = ({ open, onClose, onFolderCreated }) => {
   const [folderName, setFolderName] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -22,7 +22,6 @@ const CreateFolderModal: React.FC<{
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFolderName(e.target.value);
   };
- 
   const handleSubmit = async () => {
     if (!folderName) {
       setError('Folder name is required');
@@ -47,10 +46,11 @@ const CreateFolderModal: React.FC<{
         throw new Error(data.error || 'Failed to create folder');
       }
 
-      onFolderCreated(); // Notify the parent component to refresh folder list
-      onClose(); // Close modal
+      onFolderCreated('Folder create successfully!');
+      onClose();
     } catch (error: any) {
       setError(error.message);
+      onFolderCreated(error.message);
     } finally {
       setLoading(false);
     }
@@ -70,7 +70,7 @@ const CreateFolderModal: React.FC<{
           autoFocus
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              e.preventDefault(); 
+              e.preventDefault();
               handleSubmit();
             }
           }}
