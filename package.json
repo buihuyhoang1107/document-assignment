@@ -12,7 +12,9 @@
     "lint": "nx run-many --target=lint --all",
     "lint:server": "nx run server:lint",
     "lint:client": "nx run client:lint",
-    "format": "nx format --all"
+    "format": "nx format --all",
+    "dev": "remix dev",
+    "build": "remix build && vite build"
   },
   "private": true,
   "dependencies": {
