@@ -2,8 +2,8 @@
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/kamilabs-ai/nx-document-assignment.git
-   cd nx-document-assignment
+   git clone https://github.com/buihuyhoang1107/document-assignment.git
+   cd document-assignment
    ```
 2. **Install Dependencies**
 
@@ -12,6 +12,9 @@
 
    # run client and server apps
    pnpm start
+   
+   # run server apps
+   pnpm start:server
 
    # run tests
    pnpm test
@@ -23,79 +26,48 @@ Build a **lightweight internal document management system** that allows users to
 
 ### **Core Features**
 
-- **Browse folders and view documents inside folders.**
-- **Create, edit, and delete documents within folders.**
-- **Search for documents by title.**
-- **Keep track of recently viewed documents for easy access.**
+- [x] Browse folders and view documents inside folders.
+- [x] Create, edit, and delete documents within folders.
+- [x] Search for documents by title.
+- [x] Keep track of recently viewed documents for easy access.
 
-### **Optional (Bonus)**
-
-- **Support Markdown formatting** for viewing documents in a formatted style.
-- **Basic UI styling** with Tailwind, MUI, or any other approach.
+- [x] Support Markdown formatting for viewing documents in a formatted style.
+- [x] Basic UI styling with Tailwind, Materila ui.
 
 ---
 
-## **Requirements:**
+## **Here is what was achieved:**
 
-- The app must have a **simple, user-friendly UI** with intuitive navigation.
-- Users should be able to **create, edit, and delete documents** inside folders.
-  - **When creating a document, users must manually input plain text.**
-- The app should allow users to **search for documents** by their title.
-- **Recently viewed documents** should be saved and displayed for quick access.
-- API calls should be **efficient and properly handled**, with error messages and loading states.
+- [x] Users should be able to **create, edit, and delete documents** inside folders.
+- [x] The app should allow users to **search for documents** by their title.
+- [x] **Recently viewed documents** should be saved and displayed.
+- [x] API calls should be **efficient and properly handled**, with error messages and loading states.
 
-## **Optional Features (Bonus Points)**:
+## **UI description Folder**:
 
-- Use **any styling approach** (or none). Options: Tailwind, MUI, Styled Components, etc.
-- Write **a couple of tests**—2 or 3 should be enough. No need for full test coverage.
-- **(Bonus) Support for Markdown rendering when viewing documents.**
-  - Users can enter plain text with Markdown syntax (e.g., # Heading, **bold**, - list item).
-  - The app should render Markdown as formatted content when viewing the document.
-  - If Markdown is not implemented, the app should display the content as plain text.
+| **ID** | **Description** | **Image** |
+|:-------|:------:|:-------:|
+| 1 | Folder List | ![image](https://github.com/user-attachments/assets/a0ca75ea-4d5a-4d4e-a80b-1c5d4eae39f6) |
+| 2 | Create Folder | ![image](https://github.com/user-attachments/assets/838e86ec-0c7e-4ac6-9f30-d423388d1ef9) |
+| 3 | Notification when create Folder successfully | ![image](https://github.com/user-attachments/assets/a4b656fa-06fd-474e-b948-22261cd18ef0)|
+| 4 | Delete Folder | ![image](https://github.com/user-attachments/assets/b051728a-7e57-4bc5-831a-ccc404552593) |
+| 5 | Notification when delete Folder successfully | ![image](https://github.com/user-attachments/assets/bf527350-17b8-4d8e-93bb-54d8ed12ef46) |
 
-## Server / API
+## **UI description Document**:
 
-The server application is available at `http://localhost:4000/api` when you run `pnpm start`.
+| **ID** | **Description** | **Image** |
+|:-------|:------:|:-------:|
+| 1 | Document List | ![image](https://github.com/user-attachments/assets/f14926f0-e0d3-4059-a773-ff21f622d565) |
+| 2 | Create Document | ![image](https://github.com/user-attachments/assets/3a45c637-7fa3-41e8-bad8-89f82185ecf1) |
+| 3 | Notification when create Document successfully | ![image](https://github.com/user-attachments/assets/7906d17d-48fd-4c6f-a214-2cd7c6b3823f) |
+| 4 | View detail Document | ![image](https://github.com/user-attachments/assets/f319a010-f099-4ae8-8d61-d0e302681e2b) |
+| 5 | View detail Document | ![image](https://github.com/user-attachments/assets/2adf243a-5259-4d77-9f26-271dd81ab525) |
+| 6 | Delete Document | ![image](https://github.com/user-attachments/assets/db7e543a-99c5-49bc-80d8-845787c8f0b0) |
+| 7 | Notification when delete Document successfully | ![image](https://github.com/user-attachments/assets/b1397097-7afe-441d-a1f7-7da64abc88d8) |
+| 8 | Update Document | ![image](https://github.com/user-attachments/assets/9bd30150-fe1e-4275-9a58-bb2baf1e3a62) |
+| 9 | Notification when update Document successfully | ![image](https://github.com/user-attachments/assets/141405b3-e37f-4461-aa5a-fde275487211) |
+| 10 | Search Document | ![image](https://github.com/user-attachments/assets/167abf26-1034-4a60-bfb7-5f7c26ae2baa) ![image](https://github.com/user-attachments/assets/2349f017-70d3-4754-a95b-27c8613f8775)
+| 11 | History Viewed Documents| ![image](https://github.com/user-attachments/assets/490f6480-329a-4e4f-ad41-34fa3f491482) |
+| 12 | Full creen Documents for Folder | ![image](https://github.com/user-attachments/assets/a9cef26a-d0af-4c86-b01e-baf35b6e1bf7) |
 
-Please see the [API docs here](./server/README.md).
 
-## **Submitting Your Solution**
-
-1. **Source Code:**
-
-   - Provide a public GitHub repository with all frontend source code.
-   - Your submission should include:
-     - All **React and TypeScript files** (for the frontend).
-     - Any **assets, configurations, and dependencies** required to run the application.
-   - The backend is already provided, so candidates only need to implement the frontend.
-
-2. **Live Link (Optional):**
-   - You can deploy the website on a hosting platform (e.g., Vercel, Netlify) and provide the live link.
-   - This allows reviewers to test your application directly.
-
-## **Using AI Tools (Encouraged!)**
-
-We encourage you to leverage AI tools (e.g., GitHub Copilot, ChatGPT, Tabnine) to improve efficiency, code quality, and problem-solving. However, ensure that you **understand and can explain** all the code you submit.
-
-## **Evaluation Criteria**
-
-Your submission will be assessed based on the following key factors:
-
-### **1. Core Functionality (70%)**
-
-- Does the document management system work correctly?
-- Can users **create, edit, delete, and search for documents**?
-- Does the history of **recently viewed documents** persist correctly?
-- Is the **UI/UX user-friendly, visually appealing, and intuitive to use**?
-
-### **2. Code Quality & Best Practices (20%)**
-
-- Is the code **clean, well-structured, and maintainable**?
-- Are **React best practices** followed (component reusability, separation of concerns, proper state handling)?
-- Are asynchronous calls (**API requests**) **handled correctly** with proper error handling?
-
-### **3. Optional Enhancements (10%)**
-
-- Has the developer implemented **basic styling** for a user-friendly UI?
-- Has the developer added **basic tests** (if any) to validate core features?
-- **(Bonus) If Markdown support is implemented, does it work correctly?**
